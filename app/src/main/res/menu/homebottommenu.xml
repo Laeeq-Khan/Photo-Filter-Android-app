@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_recents"
+        android:enabled="true"
+        android:icon="@drawable/abc_vector_test"
+        android:title="Home"
+        app:showAsAction="ifRoom" />
+
+    <item
+    android:id="@+id/action_favorites"
+    android:enabled="true"
+    android:icon="@drawable/abc_vector_test"
+    android:title="About Us"
+    app:showAsAction="ifRoom" />
+
+    <item
+    android:id="@+id/action_nearby"
+    android:enabled="true"
+    android:icon="@drawable/abc_vector_test"
+    android:title="Take Photo"
+    app:showAsAction="ifRoom" />
+
+
+
+
+
+</menu>

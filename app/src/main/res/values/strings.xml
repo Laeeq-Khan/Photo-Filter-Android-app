@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Pro Photo Filter</string>
+
+
+    <string name="bannerUnit">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitialUnit">ca-app-pub-3940256099942544/1033173712</string>
+
+    <string name="title_activity_photo_filtering">PhotoFiltering</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hello_this_is_card_fragment">Hello This is card fragment</string>
+
+</resources>

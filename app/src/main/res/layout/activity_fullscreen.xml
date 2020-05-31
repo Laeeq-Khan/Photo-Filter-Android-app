@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:id="@+id/fullscreen_content"
+    tools:context=".FullscreenActivity"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="20dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/homefontdark"
+                android:text="Free Pro Photo Effects"
+                android:textAlignment="center"
+                android:textSize="25sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/homeactivityimage" />
+
+            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/bannerUnit"></com.google.android.gms.ads.AdView>
+
+
+            <GridLayout
+                android:id="@+id/mainGrid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alignmentMode="alignMargins"
+                android:columnCount="2"
+                android:columnOrderPreserved="false"
+                android:padding="5dp"
+                android:layout_marginTop="15dp"
+                android:rowCount="1"
+               >
+
+
+              <androidx.cardview.widget.CardView
+                  android:id="@+id/galleryselect"
+                  android:clickable="true"
+                  android:contextClickable="true"
+                  android:layout_width="130dp"
+                  android:layout_height="140dp"
+                  app:cardElevation="8dp"
+                  app:cardCornerRadius="8dp"
+                  android:layout_marginLeft="30dp"
+                  android:padding="10dp"
+                  android:layout_marginBottom="20dp"
+                  app:cardBackgroundColor="#F2F2F2"
+                  >
+
+                  <LinearLayout
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical">
+
+                      <ImageView
+                          android:layout_width="110dp"
+                          android:layout_height="110dp"
+                          android:layout_gravity="center"
+                          android:src="@drawable/garllyicon"/>
+                      <TextView
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:text="Choose Photo"
+                          android:textSize="15sp"
+                          android:layout_gravity="center"
+                          android:textAlignment="center"
+                          android:padding="5dp"
+                          />
+
+                  </LinearLayout>
+
+              </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cameraSelect"
+                    android:clickable="true"
+                    android:layout_width="130dp"
+                    android:layout_height="140dp"
+                    app:cardElevation="8dp"
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginLeft="30dp"
+                    android:padding="10dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardBackgroundColor="#F2F2F2"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/cameraIcon"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/cameraicon"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Take Photo"
+                            android:textSize="15sp"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"
+                            android:padding="5dp"
+                            />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+            </GridLayout>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+ 
+</RelativeLayout>
