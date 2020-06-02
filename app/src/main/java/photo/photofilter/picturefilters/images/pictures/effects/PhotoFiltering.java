@@ -8,24 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.PointF;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
+
+import photo.photofilter.picturefilters.images.pictures.effects.filters.FiltersActivity;
+import photo.photofilter.picturefilters.images.pictures.effects.filters.First_ImageContainerFragment;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -54,7 +50,7 @@ public class PhotoFiltering extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_photo_filtering);
+        setContentView(R.layout.main_activity_contain_tools_nav);
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
         imagePath = getIntent().getStringExtra("picturePath");

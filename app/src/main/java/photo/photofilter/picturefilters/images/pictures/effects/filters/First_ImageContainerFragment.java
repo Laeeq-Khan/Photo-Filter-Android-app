@@ -1,4 +1,4 @@
-package photo.photofilter.picturefilters.images.pictures.effects;
+package photo.photofilter.picturefilters.images.pictures.effects.filters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import photo.photofilter.picturefilters.images.pictures.effects.FullscreenActivity;
+import photo.photofilter.picturefilters.images.pictures.effects.R;
+
 
 public class First_ImageContainerFragment extends Fragment {
 
@@ -30,9 +33,6 @@ public class First_ImageContainerFragment extends Fragment {
     public First_ImageContainerFragment() {
 
     }
-
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,8 +79,6 @@ public class First_ImageContainerFragment extends Fragment {
         });
 
     }
-
-
 
     float[] lastEvent = null;
     float d = 0f;

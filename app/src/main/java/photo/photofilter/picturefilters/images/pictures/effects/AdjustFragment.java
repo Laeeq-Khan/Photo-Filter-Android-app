@@ -1,4 +1,4 @@
-package photo.photofilter.picturefilters.images.pictures.effects.filters;
+package photo.photofilter.picturefilters.images.pictures.effects;
 
 import android.os.Bundle;
 
@@ -8,27 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import photo.photofilter.picturefilters.images.pictures.effects.R;
 
+public class AdjustFragment extends Fragment {
 
-
-public class GlitchFragment extends Fragment {
-
-
-     public GlitchFragment() {
-        // Required empty public constructor
-    }
-
-     @Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-     }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_glitch, container, false);
+        return inflater.inflate(R.layout.adjustment_fragment_tools, container, false);
     }
 }

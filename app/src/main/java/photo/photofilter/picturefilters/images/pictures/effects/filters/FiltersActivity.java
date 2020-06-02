@@ -1,4 +1,4 @@
-package photo.photofilter.picturefilters.images.pictures.effects;
+package photo.photofilter.picturefilters.images.pictures.effects.filters;
 
 import android.annotation.SuppressLint;
 
@@ -18,11 +18,12 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.zomato.photofilters.imageprocessors.Filter;
-import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 
-import photo.photofilter.picturefilters.images.pictures.effects.filters.AdjustFragment;
-import photo.photofilter.picturefilters.images.pictures.effects.filters.Filters_List_Fragment;
-import photo.photofilter.picturefilters.images.pictures.effects.filters.GlitchFragment;
+import java.io.ByteArrayOutputStream;
+
+import photo.photofilter.picturefilters.images.pictures.effects.AdjustFragment;
+import photo.photofilter.picturefilters.images.pictures.effects.GlitchFragment;
+import photo.photofilter.picturefilters.images.pictures.effects.R;
 
 
 /**
@@ -38,12 +39,24 @@ public class FiltersActivity extends AppCompatActivity {
     private View mContentView;
     String imagePath;
     CardView bottomNavigation , filterTab, glitchTab, adjustTab;
-    ImageView filterImage;
+    static ImageView filterImage;
+    static  Bitmap bitmap;
+    static int count=0;
+
+    public static void filterApply(Filter filter){
+        if(count==0){
+            BitmapDrawable bitmapDrawable = (BitmapDrawable)filterImage.getDrawable();
+            bitmap = bitmapDrawable.getBitmap();
+        }count++;
+        Bitmap bitmcopy = bitmap.copy(bitmap.getConfig(), bitmap.isMutable());
+        filter.processFilter(bitmcopy);
+        filterImage.setImageBitmap(bitmcopy);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_filters);
+        setContentView(R.layout.filter_activty);
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
         imagePath = getIntent().getStringExtra("picturePath");
@@ -55,22 +68,14 @@ public class FiltersActivity extends AppCompatActivity {
 
         toolsAppearAnimation(bottomNavigation);
 
-
         if(imagePath!=null){
             Glide.with(this).load(imagePath).skipMemoryCache(true).into(filterImage);
         }else{
-
-               filterImage.setImageResource(R.drawable.chooseimage);
-            BitmapDrawable bitmapDrawable  = (BitmapDrawable)filterImage.getDrawable();
-            Bitmap bitmap = bitmapDrawable.getBitmap();
-            Filter filter = new Filter();
-            filter.addSubFilter(new BrightnessSubFilter(60));
-            filterImage.setImageBitmap(filter.processFilter(bitmap));
-
-
+            filterImage.setImageResource(R.drawable.chooseimage);
         }
+
         events();
-        filerFragmentDisplay();
+
     }
 
     public void events(){
@@ -98,9 +103,20 @@ public class FiltersActivity extends AppCompatActivity {
     }
 
     public void filerFragmentDisplay(){
-        BitmapDrawable drawable = (BitmapDrawable) filterImage.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
-        Filters_List_Fragment filters_list_fragment = new Filters_List_Fragment(this, bitmap);
+        if(count ==0){
+            BitmapDrawable bitmapDrawable = (BitmapDrawable)filterImage.getDrawable();
+            bitmap = bitmapDrawable.getBitmap();
+        }
+        Bitmap bitmap1  = bitmap.copy(bitmap.getConfig(), bitmap.isMutable());
+        Bundle args = new Bundle();
+        Filters_List_Fragment filters_list_fragment = new Filters_List_Fragment();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap1.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        args.putString("imagePath", imagePath);
+        args.putByteArray("bitmap", byteArray);
+        filters_list_fragment.setArguments(args);
+
         getSupportFragmentManager().beginTransaction().replace(R.id.navigationFragmentsContainer, filters_list_fragment).commit();
 
     }

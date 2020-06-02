@@ -59,7 +59,6 @@ public class CropFragment extends Fragment {
     TextView saveButton;
 
     public CropFragment(String path , Context context){
-        System.out.println("Path we received "+path);
         imagePath = path;
         this.context = context;
      }

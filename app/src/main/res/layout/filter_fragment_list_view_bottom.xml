@@ -7,14 +7,12 @@
     tools:context=".filters.Filters_List_Fragment"
     >
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filters_recycler_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
     </androidx.recyclerview.widget.RecyclerView>
-
 
 
 </RelativeLayout>
