@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".First_ImageContainerFragment"
+    android:background="@color/mainBlackColor"
+    android:id="@+id/firstLoadFrament">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:cardBackgroundColor="@color/mainBlackColor"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:layout_width="50dp"
+                android:paddingRight="12dp"
+                android:paddingLeft="12dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/backCropFragment"
+                android:layout_height="match_parent"
+                android:src="@drawable/abc_vector_test"
+                android:foreground="@drawable/custom_ripple"
+                android:clickable="true"
+                android:layout_alignParentLeft="true"
+                android:focusable="true"/>
+
+
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:layout_alignParentEnd="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:id="@+id/cropImageView">
+
+    </ImageView>
+    </LinearLayout>
+</RelativeLayout>

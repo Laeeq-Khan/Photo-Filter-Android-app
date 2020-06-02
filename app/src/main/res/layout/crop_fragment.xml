@@ -2,10 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".CropFragment"
-    android:background="@color/mainBlackColor">
+    android:background="@color/mainBlackColor"
+    android:layout_alignParentTop="true">
+
+
+
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -32,6 +37,7 @@
                 android:focusable="true"/>
 
             <TextView
+                android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="Save"
@@ -50,11 +56,195 @@
 
     </androidx.cardview.widget.CardView>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/cropImageView">
+        <ImageView
+            android:id="@+id/cropImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:scaleType="fitCenter">
 
-    </ImageView>
+        </ImageView>
+
+   <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:elevation="8dp"
+            android:id="@+id/cropToolsCardView"
+            app:cardBackgroundColor="#1B1B1B"
+            android:layout_marginBottom="30dp"
+            app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+
+                    <!--          Crop Icon-->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardBackgroundColor="#2C2D2E"
+                        app:cardElevation="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/custom_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:layout_marginRight="15dp"
+                        app:cardCornerRadius="25dp"
+                        android:id="@+id/cropIcon">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_marginTop="3dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/cropicon"/>
+
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!--          Rotate Icon-->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardBackgroundColor="#2C2D2E"
+                        app:cardElevation="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/custom_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="25dp"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/rotateicon">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_marginTop="3dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/rotatecircleicon"/>
+
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!--          Left Rotate Icon-->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardBackgroundColor="#2C2D2E"
+                        app:cardElevation="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/custom_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="25dp"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/leftRotate">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_marginTop="3dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/leftrotateicon"/>
+
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!--          Right Rotate Icon-->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardBackgroundColor="#2C2D2E"
+                        app:cardElevation="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/custom_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="25dp"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/righRotate">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_marginTop="3dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/rightrotate"/>
+
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+                    <!--          Flip Image Icon-->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        app:cardBackgroundColor="#2C2D2E"
+                        app:cardElevation="0dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_gravity="center"
+                        android:foreground="@drawable/custom_ripple"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardCornerRadius="25dp"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/flipImage">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_marginTop="3dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/flipicon"/>
+
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

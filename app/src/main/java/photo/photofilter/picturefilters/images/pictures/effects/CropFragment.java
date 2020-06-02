@@ -1,27 +1,53 @@
 package photo.photofilter.picturefilters.images.pictures.effects;
 
+import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 public class CropFragment extends Fragment {
 
-    private CropViewModel mViewModel;
 
     public CropFragment(){
 
@@ -29,37 +55,67 @@ public class CropFragment extends Fragment {
 
     String imagePath;
     Context context;
+    CardView cropToolsCardView, cardLeftRotate, cardRightRotate, cardRefelect, flipImage;
+    TextView saveButton;
+
     public CropFragment(String path , Context context){
+        System.out.println("Path we received "+path);
         imagePath = path;
         this.context = context;
-        System.out.println("-------------------------------------------- This is path we received" +path);
-    }
+     }
 
     public static CropFragment newInstance() {
         return new CropFragment();
     }
 
     ImageView cropImageView,backCropFragment;
+    CardView cropCard;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.crop_fragment, container, false);
             cropImageView = view.findViewById(R.id.cropImageView);
-
+            cropToolsCardView = view.findViewById(R.id.cropToolsCardView);
             backCropFragment = view.findViewById(R.id.backCropFragment);
+            cropCard = view.findViewById(R.id.cropIcon);
+            cardLeftRotate = view.findViewById(R.id.leftRotate);
+            cardRightRotate = view.findViewById(R.id.righRotate);
+            cardRefelect = view.findViewById(R.id.rotateicon);
+            saveButton = view.findViewById(R.id.saveButton);
+            flipImage = view.findViewById(R.id.flipImage);
+            toolsAppearAnimation(cropToolsCardView);
+
 
             if(imagePath!=null){
                 Glide.with(this).load(imagePath).skipMemoryCache(true).into(cropImageView);
             }else{
-                cropImageView.setImageResource(R.drawable.homeactivityimage);
+                cropImageView.setImageResource(R.drawable.chooseimage);
+
             }
-
             events();
-
         return view;
     }
 
+    private void toolsAppearAnimation(CardView view){
+
+        Animation aniFade = AnimationUtils.loadAnimation(context,R.anim.crop_fragment_tools_appear);
+        view.startAnimation(aniFade);
+
+    }
+
+
     public void events(){
+
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BitmapDrawable drawable = (BitmapDrawable) cropImageView.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                SaveImage(bitmap);
+
+            }
+        });
 
         backCropFragment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,13 +133,103 @@ public class CropFragment extends Fragment {
             }
         });
 
+        cropCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                crop();
+            }
+        });
+
+        final int[] rotateAngle = {0};
+        cardLeftRotate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rotateAngle[0] -=90;
+                Picasso.get().load(new File(imagePath)).rotate(rotateAngle[0]).into(cropImageView);
+
+            }
+        });
+        cardRightRotate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rotateAngle[0] +=90;
+                Picasso.get().load(new File(imagePath)).rotate(rotateAngle[0]).into(cropImageView);
+            }
+        });
+        cardRefelect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rotateAngle[0] +=180;
+                Picasso.get().load(new File(imagePath)).rotate(rotateAngle[0]).into(cropImageView);
+            }
+        });
+
+        flipImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BitmapDrawable drawable = (BitmapDrawable) cropImageView.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+                cropImageView.setImageBitmap(flip(bitmap));
+            }
+        });
+
     }
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(CropViewModel.class);
-        // TODO: Use the ViewModel
+
+    public static Bitmap flip(Bitmap src) {
+        Matrix matrix = new Matrix();
+
+        matrix.preScale(-1.0f, 1.0f);
+
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
+
+    public  void SaveImage(Bitmap finalBitmap) {
+
+        File myDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Beauty Snaps");
+        if(!myDir.exists())
+            myDir.mkdirs();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "JPEG_" + timeStamp + "_laeeq.jpg";
+        File file = new File (myDir, fname);
+        imagePath = file.getPath();
+
+//        if (file.exists ())
+//            file.delete ();
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
+            out.flush();
+            out.close();
+            Toast.makeText(context, "Image Saved", Toast.LENGTH_LONG).show();
+            //This code to display your new image into gallary
+            MediaScannerConnection.scanFile(context,
+                    new String[] { imagePath }, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+
+                        }
+                    });
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Toast.makeText(context, "Not Saved. Error! Try Again", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void crop(){
+//
+//        Uri path = Uri.parse("android.resource://photo.photofilter.picturefilters.images.pictures.effects/" + R.drawable.homeactivityimage);
+//        String imgPath = path.toString();
+        Uri path2 =  Uri.fromFile(new File(imagePath));
+        CropImage.activity(path2).start(getActivity());
+    }
+
+
+
 
 
     float[] lastEvent = null;

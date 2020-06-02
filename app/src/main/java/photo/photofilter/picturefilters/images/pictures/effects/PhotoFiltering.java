@@ -2,20 +2,30 @@ package photo.photofilter.picturefilters.images.pictures.effects;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -32,8 +42,11 @@ public class PhotoFiltering extends AppCompatActivity {
     private static final int UI_ANIMATION_DELAY = 10;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
-    CardView cropCard, filterCard, adjustmentCard, effectCard;
+    CardView cropCard, filterCard, adjustmentCard, effectCard,bottomnavigation;
 
+    static{
+        System.loadLibrary("NativeImageProcessor");
+    }
 
 
     String imagePath;
@@ -45,14 +58,21 @@ public class PhotoFiltering extends AppCompatActivity {
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
         imagePath = getIntent().getStringExtra("picturePath");
-        //Glide.with(this).load(path).skipMemoryCache(true).into(imageDisplay);
         mainLayouteContainer= findViewById(R.id.mainLayouteContainer);
         cropCard  = findViewById(R.id.cropIcon);
         filterCard = findViewById(R.id.filterIcon);
         adjustmentCard = findViewById(R.id.adjustmentIcon);
         effectCard = findViewById(R.id.effectIcon);
         events();
+        onload();
 
+
+    }
+
+
+    private void onload(){
+        First_ImageContainerFragment firstFrament = new First_ImageContainerFragment(imagePath , this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainLayouteContainer,firstFrament ).commit();
     }
 
     private void events(){
@@ -60,13 +80,22 @@ public class PhotoFiltering extends AppCompatActivity {
         cropCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Before ");
-                CropFragment cropFragment = new CropFragment(imagePath , PhotoFiltering.this );
+                CropFragment cropFragment = new CropFragment(imagePath,PhotoFiltering.this.getApplicationContext());
                 getSupportFragmentManager().beginTransaction().replace(R.id.mainLayouteContainer,cropFragment ).commit();
             }
         });
 
+        filterCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(PhotoFiltering.this, FiltersActivity.class);
+               intent.putExtra("picturePath", imagePath);
+               startActivity(intent);
+            }
+        });
+
     }
+
 
 
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -135,6 +164,10 @@ public class PhotoFiltering extends AppCompatActivity {
             show();
         }
     }
+
+
+
+
     private void hide() {
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
@@ -182,7 +215,21 @@ public class PhotoFiltering extends AppCompatActivity {
     }
 
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                Uri uri = result.getUri();
+                CropFragment cropFragment = new CropFragment(uri.getPath().toString(),PhotoFiltering.this.getApplicationContext());
+                getSupportFragmentManager().beginTransaction().replace(R.id.mainLayouteContainer,cropFragment ).commit();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                error.printStackTrace();
+            }
+        }
+    }
 
     float[] lastEvent = null;
     float d = 0f;
@@ -251,7 +298,7 @@ public class PhotoFiltering extends AppCompatActivity {
                         }
                         if (lastEvent != null) {
 
-                            view.setRotation((float) (view.getRotation() + (newRot - d)));
+                            view.setRotation(view.getRotation() + (newRot - d));
                         }
                     }
                 }
