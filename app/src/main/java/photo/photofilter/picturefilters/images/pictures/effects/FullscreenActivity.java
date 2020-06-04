@@ -13,7 +13,9 @@ import androidx.core.content.FileProvider;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,16 +26,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.CommonMethods;
+import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.PhotoModel;
 
 
 /**
@@ -41,28 +42,17 @@ import java.util.Date;
  * status bar and navigation/system bar) with user interaction.
  */
 public class FullscreenActivity extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
+
     private static final boolean AUTO_HIDE = true;
     private CardView camera;
     private CardView gallery;
-
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
+    static final int REQUEST_IMAGE_CAPTURE = 100;
+    ImageView homeImageView;
     private static final int AUTO_HIDE_DELAY_MILLIS = 50;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY =50;
     private final Handler mHideHandler = new Handler();
     private View mContentView;
+
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -104,6 +94,7 @@ public class FullscreenActivity extends AppCompatActivity {
     };
 
     private AdView mAdView;
+    private CommonMethods commonMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +106,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mContentView = findViewById(R.id.fullscreen_content);
         camera = findViewById(R.id.cameraSelect);
         gallery = findViewById(R.id.galleryselect);
+        homeImageView = findViewById(R.id.homeImageView);
 
 //        MobileAds.initialize(this, new OnInitializationCompleteListener() {
 //            @Override
@@ -125,11 +117,12 @@ public class FullscreenActivity extends AppCompatActivity {
 //        AdRequest adRequest = new AdRequest.Builder().build();
 //        mAdView.loadAd(adRequest);
         events();
+        commonMethods = new CommonMethods();
 
     }
 
 
-    private static int RESULT_LOAD_IMAGE = 1;
+    private static int RESULT_LOAD_IMAGE_Gallary = 1;
     public void events(){
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,8 +130,7 @@ public class FullscreenActivity extends AppCompatActivity {
                 galleryPermissions();
                 Intent i = new Intent(
                         Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
+                startActivityForResult(i, RESULT_LOAD_IMAGE_Gallary);
             }
         });
 
@@ -147,38 +139,16 @@ public class FullscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 cameraPermission();
-                captureFromCamera();
+                dispatchTakePictureIntent();
             }
         });
 
     }
 
-    private void captureFromCamera() {
-        try {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", createImageFile()));
-            startActivityForResult(intent, 100);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private String cameraFilePath;
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        //This is the directory in which the file will be created. This is the default location of Camera photos
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "");
-        File image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for using again
-        cameraFilePath = image.getAbsolutePath();
-        return image;
+    public File getPhotoFileUri() {
+            File imagePath = new File(getApplicationContext().getFilesDir(), ".");
+            File newFile = new File(imagePath, commonMethods.getUniqueFileName());
+        return newFile;
     }
 
     @Override
@@ -194,33 +164,42 @@ public class FullscreenActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == RESULT_LOAD_IMAGE_Gallary && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            System.out.println("Selected image uri this is ================= "+selectedImage);
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
-
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
+            final ImageView imageView = new ImageView(getApplicationContext());
+            PhotoModel.getInstance().setImage_Uri(Uri.parse(picturePath));
+            imageView.setImageURI(PhotoModel.getInstance().getImage_Uri());
+            BitmapDrawable bitmapDrawable = (BitmapDrawable)imageView.getDrawable();
+            PhotoModel.getInstance().setPhoto(bitmapDrawable.getBitmap());
             Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
-            intent.putExtra("picturePath", picturePath);
             startActivity(intent);
-
         }
-        if (requestCode == 100) {
-            if (resultCode == RESULT_OK) {
-                Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
-                intent.putExtra("picturePath",cameraFilePath);
-                startActivity(intent);
-            }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+            PhotoModel.getInstance().setImage_Uri(Uri.parse(photoFile.getAbsolutePath()));
+            PhotoModel.getInstance().setPhoto(takenImage);
+            Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
+            startActivity(intent);
         }
-
     }
 
+    File photoFile;
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = getPhotoFileUri();
+        Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "photo.photofilter.picturefilters.images.pictures.effects.fileprovider", photoFile);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -231,20 +210,16 @@ public class FullscreenActivity extends AppCompatActivity {
         // are available.
         delayedHide(100);
     }
-
-
     @Override
     protected void onResume() {
         super.onResume();
         hide();
     }
-
     @Override
     protected void onRestart() {
         super.onRestart();
         hide();
     }
-
     private void hide() {
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
@@ -258,12 +233,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
-
-
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
@@ -290,13 +259,11 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         }, 2000);
     }
-
     private void cameraPermission(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
         }
     }
-
     private void galleryPermissions(){
         if (ContextCompat.checkSelfPermission(FullscreenActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted

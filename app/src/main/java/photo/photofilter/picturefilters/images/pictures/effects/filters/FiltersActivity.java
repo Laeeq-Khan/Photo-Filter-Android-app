@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
@@ -16,14 +15,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.zomato.photofilters.imageprocessors.Filter;
 
-import java.io.ByteArrayOutputStream;
-
-import photo.photofilter.picturefilters.images.pictures.effects.AdjustFragment;
 import photo.photofilter.picturefilters.images.pictures.effects.GlitchFragment;
 import photo.photofilter.picturefilters.images.pictures.effects.R;
+import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.CommonMethods;
+import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.PhotoModel;
 
 
 /**
@@ -40,42 +37,31 @@ public class FiltersActivity extends AppCompatActivity {
     String imagePath;
     CardView bottomNavigation , filterTab, glitchTab, adjustTab;
     static ImageView filterImage;
-    static  Bitmap bitmap;
-    static int count=0;
+    CommonMethods commonMethods;
 
     public static void filterApply(Filter filter){
-        if(count==0){
-            BitmapDrawable bitmapDrawable = (BitmapDrawable)filterImage.getDrawable();
-            bitmap = bitmapDrawable.getBitmap();
-        }count++;
-        Bitmap bitmcopy = bitmap.copy(bitmap.getConfig(), bitmap.isMutable());
-        filter.processFilter(bitmcopy);
-        filterImage.setImageBitmap(bitmcopy);
+        Bitmap bitmcopy = PhotoModel.getInstance().getPhotoCopyBitmap();
+        //custom scalling is important to apply filter otherwise it will not apply on image
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmcopy, bitmcopy.getWidth()-1, bitmcopy.getHeight()-1, false);
+        filter.processFilter(scaledBitmap);
+        filterImage.setImageBitmap(scaledBitmap);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter_activty);
+        commonMethods = new CommonMethods();
         mVisible = true;
         mContentView = findViewById(R.id.fullscreen_content);
-        imagePath = getIntent().getStringExtra("picturePath");
         bottomNavigation = findViewById(R.id.bottomnavigation);
         filterImage= findViewById(R.id.filterImage);
         filterTab = findViewById(R.id.filterTab);
         glitchTab = findViewById(R.id.glitchTab);
         adjustTab = findViewById(R.id.adjustTab);
-
         toolsAppearAnimation(bottomNavigation);
-
-        if(imagePath!=null){
-            Glide.with(this).load(imagePath).skipMemoryCache(true).into(filterImage);
-        }else{
-            filterImage.setImageResource(R.drawable.chooseimage);
-        }
-
+        filterImage.setImageBitmap(PhotoModel.getInstance().getPhoto());
         events();
-
     }
 
     public void events(){
@@ -85,14 +71,12 @@ public class FiltersActivity extends AppCompatActivity {
                 filerFragmentDisplay();
             }
         });
-
         glitchTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 glitchFragmentDisplay();
             }
         });
-
         adjustTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,23 +84,18 @@ public class FiltersActivity extends AppCompatActivity {
             }
         });
 
+        filterImage.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                commonMethods.viewTransformation(v,event);
+                return true;
+            }
+        });
+
     }
 
     public void filerFragmentDisplay(){
-        if(count ==0){
-            BitmapDrawable bitmapDrawable = (BitmapDrawable)filterImage.getDrawable();
-            bitmap = bitmapDrawable.getBitmap();
-        }
-        Bitmap bitmap1  = bitmap.copy(bitmap.getConfig(), bitmap.isMutable());
-        Bundle args = new Bundle();
         Filters_List_Fragment filters_list_fragment = new Filters_List_Fragment();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap1.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        args.putString("imagePath", imagePath);
-        args.putByteArray("bitmap", byteArray);
-        filters_list_fragment.setArguments(args);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.navigationFragmentsContainer, filters_list_fragment).commit();
 
     }
@@ -132,7 +111,6 @@ public class FiltersActivity extends AppCompatActivity {
     }
 
     private void toolsAppearAnimation(CardView view){
-
         Animation aniFade = AnimationUtils.loadAnimation(this,R.anim.crop_fragment_tools_appear);
         view.startAnimation(aniFade);
 
@@ -194,18 +172,7 @@ public class FiltersActivity extends AppCompatActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
         delayedHide(100);
-    }
-
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
     }
 
     private void hide() {

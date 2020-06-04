@@ -43,15 +43,11 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         TextView textView = holder.textView;
         ImageView imageView = holder.imageView;
-
-
         Bitmap bitmap3 = list.get(position).getBitmap();
         Bitmap bitmap2 = bitmap3.copy(bitmap3.getConfig(), bitmap3.isMutable());
         textView.setText(list.get(position).getFilterName());
         final Filter filter = list.get(position).getFilter();
-
-        Glide.with(context).load(list.get(position).getFilter().processFilter(bitmap2)).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(imageView);
-
+        imageView.setImageBitmap(list.get(position).getFilter().processFilter(bitmap2));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

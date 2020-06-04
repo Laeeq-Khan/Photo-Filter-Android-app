@@ -18,10 +18,12 @@ import com.zomato.photofilters.imageprocessors.Filter;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import photo.photofilter.picturefilters.images.pictures.effects.R;
+import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.PhotoModel;
 
 
 public class Filters_List_Fragment extends Fragment {
@@ -29,8 +31,6 @@ public class Filters_List_Fragment extends Fragment {
 
     RecyclerView recyclerView;
     Context context;
-    String imagePath;
-    Bitmap bitmap;
 
     public Filters_List_Fragment(){
 
@@ -40,10 +40,7 @@ public class Filters_List_Fragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        imagePath = getArguments().getString("imagePath");
-        byte[] bytes = getArguments().getByteArray("bitmap");
-        bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        context = getActivity();
+         context = getActivity();
 
     }
 
@@ -56,8 +53,10 @@ public class Filters_List_Fragment extends Fragment {
 
         List<FilterModel> filtersList = new ArrayList<>();
         List<Filter> filters = FilterPack.getFilterPack(getActivity());
+
+        Bitmap bitmap= Bitmap.createScaledBitmap(PhotoModel.getInstance().getPhotoCopyBitmap(), 80, 80, false);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap= Bitmap.createScaledBitmap(bitmap, 80, 80, false);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,40,stream );
         for (Filter filter : filters) {
             filtersList.add(new FilterModel(filter.getName(), bitmap,filter ));
         }
