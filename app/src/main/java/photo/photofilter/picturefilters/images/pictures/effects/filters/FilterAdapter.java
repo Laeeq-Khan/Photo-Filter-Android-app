@@ -11,8 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import com.zomato.photofilters.imageprocessors.Filter;
 
 import java.util.List;
@@ -72,7 +71,5 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyViewHold
             imageView = itemView.findViewById(R.id.filterImage);
         }
         // each data item is just a string in this case
-
     }
-
 }

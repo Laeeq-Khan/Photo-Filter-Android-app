@@ -85,7 +85,7 @@ public class CropFragment extends Fragment {
 
     }
 
-
+    boolean saveStatus = false;
     public void events(){
 
 
@@ -95,7 +95,8 @@ public class CropFragment extends Fragment {
                 BitmapDrawable drawable = (BitmapDrawable) cropImageView.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
                 SaveImage(bitmap);
-
+                PhotoModel.getInstance().setPhoto(bitmap);
+                saveStatus = false;
             }
         });
 
@@ -123,29 +124,35 @@ public class CropFragment extends Fragment {
             }
         });
 
-        final int[] rotateAngle = {0};
+        final float[] rotateAngle = {0};
         cardLeftRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rotateAngle[0] +=90;
-                cropImageView.setRotation(rotateAngle[0]);
-
+                if(rotateAngle[0]==360)rotateAngle[0]=0;
+                bitmapPhoto=rotate(bitmapPhoto, rotateAngle[0]);
+                cropImageView.setImageBitmap(bitmapPhoto);
+                saveStatus = true;
             }
         });
         cardRightRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rotateAngle[0] -=90;
-                cropImageView.setRotation(rotateAngle[0]);
-
+                if(rotateAngle[0]==360)rotateAngle[0]=0;
+                bitmapPhoto=rotate(bitmapPhoto, rotateAngle[0]);
+                cropImageView.setImageBitmap(bitmapPhoto);
+                saveStatus = true;
             }
         });
         cardRefelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rotateAngle[0] +=90;
-                cropImageView.setRotation(rotateAngle[0]);
-
+                rotateAngle[0] +=180;
+                if(rotateAngle[0]==360)rotateAngle[0]=0;
+                bitmapPhoto=rotate(bitmapPhoto, rotateAngle[0]);
+                cropImageView.setImageBitmap(bitmapPhoto);
+                saveStatus = true;
             }
         });
 
@@ -154,10 +161,19 @@ public class CropFragment extends Fragment {
             public void onClick(View v) {
                 bitmapPhoto = flip(bitmapPhoto,-1.0f, 1.0f);
                 cropImageView.setImageBitmap(bitmapPhoto);
+                saveStatus = true;
              }
         });
     }
 
+    public static Bitmap rotate(Bitmap src, float angle){
+
+        float degrees = angle;//rotation degree
+        Matrix matrix = new Matrix();
+        matrix.setRotate(degrees);
+        src = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+        return src;
+    }
     public static Bitmap flip(Bitmap src , float x, float y) {
         Matrix matrix = new Matrix();
         matrix.preScale(x, y);
@@ -190,14 +206,18 @@ public class CropFragment extends Fragment {
                         }
                     });
         }
-        catch (Exception e)
-        {
+        catch (Exception e){
             e.printStackTrace();
             Toast.makeText(getContext(), "Not Saved. Error! Try Again", Toast.LENGTH_LONG).show();
         }
     }
 
     public void crop(){
+      if(saveStatus == true){
+          Toast.makeText(getContext(), "If you want to keep changes Please Save or Press Again to Crop", Toast.LENGTH_LONG).show();
+          saveStatus = false;
+          return;
+      }
       CropImage.activity(Uri.fromFile(new File(PhotoModel.getInstance().getImage_Uri().getPath()))).start((Activity) getContext());
     }
 

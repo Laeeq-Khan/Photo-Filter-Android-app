@@ -40,7 +40,7 @@
                 android:background="#1B1B1B">
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/filterTab"
+                    android:id="@+id/saveTab"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:foreground="@drawable/custom_ripple"
@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FILTERS"
+                        android:text="SAVE"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:textSize="12sp"
@@ -61,50 +61,7 @@
                         />
 
                 </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/glitchTab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:foreground="@drawable/custom_ripple"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="#1B1B1B">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="GLITCH"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textSize="12sp"
-                        android:layout_marginRight="20sp"
-                        android:layout_marginLeft="20sp"
-                        android:textColor="#FFFFFF"
-                        android:padding="5dp"
-                        />
 
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/adjustTab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:foreground="@drawable/custom_ripple"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardBackgroundColor="#1B1B1B">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ADJUST"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textSize="12sp"
-                        android:layout_marginRight="20sp"
-                        android:layout_marginLeft="20sp"
-                        android:textColor="#FFFFFF"
-                        android:padding="5dp"
-                        />
-
-                </androidx.cardview.widget.CardView>
 
 
             </LinearLayout>

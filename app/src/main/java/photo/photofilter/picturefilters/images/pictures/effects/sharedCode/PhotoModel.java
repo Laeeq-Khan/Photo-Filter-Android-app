@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStream;
 
 public class PhotoModel {
 
@@ -22,7 +23,6 @@ public class PhotoModel {
     public static PhotoModel getInstance(){
         if(instance == null){
           instance=  new PhotoModel();
-          instance.textImageLoad();
         }
         return instance;
     }
@@ -48,7 +48,13 @@ public class PhotoModel {
     }
 
     public  void setPhoto(Bitmap photo) {
-
+//        if((photo.getWidth()>1024 && photo.getHeight() > 720)  && (photo.getWidth() < 2048 && photo.getHeight() <1440)){
+//            OutputStream stream = new ByteArrayOutputStream();
+//            photo.compress(Bitmap.CompressFormat.JPEG,80, stream);
+//        }else if(photo.getWidth() > 2048 && photo.getHeight() >1440){
+//            OutputStream stream = new ByteArrayOutputStream();
+//            photo.compress(Bitmap.CompressFormat.JPEG,65, stream);
+//        }
         PhotoModel.photo = photo;
     }
 

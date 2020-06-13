@@ -10,6 +10,7 @@ import java.util.Date;
 public class CommonMethods {
 
 
+    private static int adload =0;
 
     public String getUniqueFileName() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -17,6 +18,10 @@ public class CommonMethods {
         return imageFileName;
     }
 
+    public int getAdLoadTime(){
+        adload++;
+        return adload;
+    }
 
     float[] lastEvent = null;
     float d = 0f;

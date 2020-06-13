@@ -26,10 +26,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -108,14 +114,14 @@ public class FullscreenActivity extends AppCompatActivity {
         gallery = findViewById(R.id.galleryselect);
         homeImageView = findViewById(R.id.homeImageView);
 
-//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(InitializationStatus initializationStatus) {
-//            }
-//        });
-//        mAdView = findViewById(R.id.adView);
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        mAdView.loadAd(adRequest);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         events();
         commonMethods = new CommonMethods();
 
@@ -131,6 +137,7 @@ public class FullscreenActivity extends AppCompatActivity {
                 Intent i = new Intent(
                         Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(i, RESULT_LOAD_IMAGE_Gallary);
+
             }
         });
 
@@ -173,22 +180,67 @@ public class FullscreenActivity extends AppCompatActivity {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
-            final ImageView imageView = new ImageView(getApplicationContext());
-            PhotoModel.getInstance().setImage_Uri(Uri.parse(picturePath));
-            imageView.setImageURI(PhotoModel.getInstance().getImage_Uri());
-            BitmapDrawable bitmapDrawable = (BitmapDrawable)imageView.getDrawable();
-            PhotoModel.getInstance().setPhoto(bitmapDrawable.getBitmap());
-            Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
-            startActivity(intent);
+            try{
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                InputStream is = null;
+                is = new FileInputStream(picturePath);
+                BitmapFactory.decodeStream(is,null,options);
+                is.close();
+                is = new FileInputStream(picturePath);
+                options.inSampleSize = Math.max(options.outWidth/1024, options.outHeight/720);
+                Bitmap bitmap = BitmapFactory.decodeStream(is,null,options);
+                PhotoModel.getInstance().setPhoto(bitmap);
+                PhotoModel.getInstance().setImage_Uri(Uri.parse(picturePath));
+                Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
+                startActivity(intent);
+            }catch (Exception e){
+
+            }
+
         }
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-            PhotoModel.getInstance().setImage_Uri(Uri.parse(photoFile.getAbsolutePath()));
-            PhotoModel.getInstance().setPhoto(takenImage);
-            Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
-            startActivity(intent);
+
+            try{
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                InputStream is = null;
+                is = new FileInputStream(photoFile.getAbsolutePath());
+                BitmapFactory.decodeStream(is,null,options);
+                is.close();
+                is = new FileInputStream(photoFile.getAbsolutePath());
+                options.inSampleSize = calculateInSampleSize(options, 1024,720);
+                Bitmap bitmap = BitmapFactory.decodeStream(is,null,options);
+                PhotoModel.getInstance().setPhoto(bitmap);
+                PhotoModel.getInstance().setImage_Uri(Uri.parse(photoFile.getAbsolutePath()));
+                Intent intent = new Intent(FullscreenActivity.this, PhotoFiltering.class);
+                startActivity(intent);
+            }catch (Exception e){
+
+            }
+
         }
     }
+
+    public  int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
 
     File photoFile;
     private void dispatchTakePictureIntent() {

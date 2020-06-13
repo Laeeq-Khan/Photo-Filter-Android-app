@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import photo.photofilter.picturefilters.images.pictures.effects.FullscreenActivity;
 import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.CommonMethods;
 import photo.photofilter.picturefilters.images.pictures.effects.sharedCode.PhotoModel;

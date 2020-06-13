@@ -57,8 +57,8 @@ public class PhotoFiltering extends AppCompatActivity {
         mainLayouteContainer= findViewById(R.id.mainLayouteContainer);
         cropCard  = findViewById(R.id.cropIcon);
         filterCard = findViewById(R.id.filterIcon);
-        adjustmentCard = findViewById(R.id.adjustmentIcon);
-        effectCard = findViewById(R.id.effectIcon);
+      //  adjustmentCard = findViewById(R.id.adjustmentIcon);
+      //  effectCard = findViewById(R.id.effectIcon);
         events();
         onload();
 
@@ -90,6 +90,8 @@ public class PhotoFiltering extends AppCompatActivity {
         });
 
     }
+
+
 
 
 
@@ -207,6 +209,8 @@ public class PhotoFiltering extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         hide();
+        CropFragment cropFragment = new CropFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainLayouteContainer,cropFragment ).commit();
     }
 
 

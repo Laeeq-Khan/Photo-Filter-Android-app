@@ -54,9 +54,9 @@ public class Filters_List_Fragment extends Fragment {
         List<FilterModel> filtersList = new ArrayList<>();
         List<Filter> filters = FilterPack.getFilterPack(getActivity());
 
-        Bitmap bitmap= Bitmap.createScaledBitmap(PhotoModel.getInstance().getPhotoCopyBitmap(), 80, 80, false);
+        Bitmap bitmap= Bitmap.createScaledBitmap(PhotoModel.getInstance().getPhotoCopyBitmap(), 60, 60, false);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,40,stream );
+        bitmap.compress(Bitmap.CompressFormat.JPEG,50,stream );
         for (Filter filter : filters) {
             filtersList.add(new FilterModel(filter.getName(), bitmap,filter ));
         }
